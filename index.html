@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Questions aléatoires 🇫🇷</title>
+  <style>
+     body {
+      background: #f4f4f9;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      /* 중앙 정렬 제거 */
+      display: block;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    #container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 80vw;
+      /* 높이 제한 및 스크롤 */
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: 0 auto; /* 수평 중앙 정렬 유지 */
+      margin-top: 20vh;
+    }
+    h1 {
+      font-size: 2.4rem;
+      color: #333;
+      min-height: 80px;
+    }
+    #progress {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 1.6rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .ok { background-color: #4CAF50; color: white; }
+    .ok:hover { background-color: #45a049; }
+    .pass { background-color: #f44336; color: white; }
+    .pass:hover { background-color: #da190b; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="progress">0 / 0</div>
+    <h1 id="question"></h1>
+    <div class="buttons">
+      <button class="ok">OK</button>
+      <button class="pass">PASS</button>
+    </div>
+  </div>
+
+<script>
+const questions = [
+      "25 Citez les trois plus grandes villes françaises.",
+      "26 Citez trois départements français.",
+      "27 Citez trois départements d’outre-mer.",
+      "28 Citez trois régions françaises.",
+      "29 Énumérez les trois types de collectivités françaises.",
+      "30 Citez des fleuves français que vous connaissez.",
+      "31 Citez des chaînes de montagnes en France que vous connaissez.",
+      "32 Quel est le point culminant en France ?",
+      "33 Quels sont les pays frontaliers ou limitrophes avec la France ?",
+      "34 Dans quelle région sommes-nous ?",
+      "35 Dans quel département sommes-nous ?",
+      "36 Qui est le président ou la présidente du conseil départemental de votre département ?",
+      "37 Citez trois rois de France.",
+      "38 Citez des reines de France.",
+      "39 En quoi et pourquoi Louis XIV est-il le plus connu ?",
+      "40 Qui était le roi de France durant la Révolution française ?",
+      "41 À quelle date précise a eu lieu la Révolution française ?",
+      "42 Quel événement de la Révolution vous a-t-il le plus marqué ?",
+      "43 Quel événement historique de la France vous a-t-il le plus marqué ?",
+      "44 Quel était le rôle de la Bastille avant sa démolition ?",
+      "45 Quand la Déclaration des droits de l’homme et du citoyen a-t-elle été adoptée ?",
+      "46 Qui a instauré le Code civil en France ?",
+      "47 Quelles sont les dates des deux dernières guerres mondiales ?",
+      "47.1 Quel événement marquant pendant la 1ère ?",
+      "47.2 Quel événement marquant pendant la 2ème ?",
+      "48 Connaissez-vous Jean Moulin ? Pourquoi est-il connu ?",
+      "49 Qui est Charles de Gaulle ?",
+      "50 Citez des monuments historiques français que vous connaissez ?",
+      "51 Quand la Cinquième République a-t-elle été instituée ?",
+      "51.1 Pour combien d’années est élu le président ? Depuis quand ?",
+      "51.2 Pourquoi le président est-il élu au suffrage universel direct ?",
+      "52 Quel a été le fait marquant de la Cinquième République ?",
+      "53 Quand la séparation de l’Église et de l’État a-t-elle eu lieu ?",
+      "54 Quels personnages de l’histoire de France vous ont le plus marqué et marqué l’histoire ?",
+      "55 Pourquoi le 1er mai est-il férié ?",
+      "56 Pourquoi le 11 novembre est-il férié ?",
+      "57 Que fête-t-on le 14 juillet ?",
+      "58 À quelle époque ont été bâties les cathédrales gothiques ?",
+      "58.1 Quelles sont les caractéristiques de l’architecture gothique ?",
+      "59 Qu’est-ce que l’hôtel de ville ?",
+      "59.1 Quels sont ses rôles principaux ?",
+      "60 Avez-vous mangé des spécialités locales lors de vos voyages en France ?",
+      "61 Quels sont les plats typiques français que vous connaissez ?",
+      "62 Citez des écrivains littéraires français célèbres.",
+      "63 Citez des peintres français célèbres.",
+      "64 Citez des personnes naturalisées françaises.",
+      "65 Citez des artistes français connus.",
+      "66 Citez des personnages littéraires français célèbres.",
+      "67 Citez des œuvres littéraires célèbres.",
+      "68 Qui a écrit Les Trois Mousquetaires ?",
+      "69 Qui était Voltaire ?",
+      "70 À quel mouvement Voltaire appartient-il ?",
+      "71 Quel grand événement sportif français connaissez-vous ?",
+      "72 Avons-nous le droit en France de porter des signes religieux dans l’espace public ?",
+      "73 Qu’est-ce que la loi de 2004 ?",
+      "73.1 Qu’en pensez-vous de la loi de 2004 ?",
+      "74 Connaissez-vous Brigitte Bardot ?",
+      "75 Citez des philosophes connus des Lumières.",
+      "76 Qu’est-ce que la philosophie des Lumières ?",
+      "77 Connaissez-vous des sportifs français(es) célèbres ?",
+      "78 Citez des plats de votre région/ville/département.",
+      "79 En quelle année l’esclavage a-t-il été aboli en France ?",
+      "80 L’école est-elle obligatoire en France ?",
+      "81 Depuis quand l’école est-elle obligatoire en France ?",
+      "82 Qui a rendu l’école obligatoire en France ?",
+      "83 Les femmes ont-elles le droit de vote en France ?",
+      "84 Depuis quand les femmes ont-elles le droit de vote en France ?",
+      "85 Qui a été à l’origine du château de Versailles ?",
+      "86 Qui a été à l’origine de l’Arc de Triomphe ?",
+      "87 Quel est le monument principal en France ?",
+      "88 Qui a construit la Tour Eiffel ?",
+      "89 Quand la Tour Eiffel a-t-elle été construite et pour quel événement ?",
+      "90 Citez des animateurs de télévision français que vous connaissez.",
+      "91 Citez des chanteurs français connus ?",
+      "92 Citez des journalistes français(es) connus ?",
+      "93 Citez des acteurs et actrices français(es) que vous connaissez.",
+      "94 Citez des anciennes colonies françaises.",
+      "95 Qu’est-ce que la guerre de 100 ans ?",
+      "96 Connaissez-vous la bataille de Verdun ?",
+      "97 Quel était le surnom des soldats français durant la Première Guerre mondiale ?",
+      "98 Quand a eu lieu la Première Guerre mondiale ?",
+      "99 Quand a eu lieu la Seconde Guerre mondiale ?",
+      "100 Qui étaient les Alliés durant la Première Guerre mondiale ?",
+      "101 Qui étaient les Alliés durant la Seconde Guerre mondiale ?",
+      "102 Quand a eu lieu le débarquement des Alliés durant la Seconde Guerre mondiale ?",
+      "103 Où a eu lieu le débarquement des Alliés durant la Seconde Guerre mondiale ?",
+      "104 Quelles sont les valeurs (ou la devise) de la République française ?",
+      "105 Si l’on devait ajouter une valeur à la devise de la République française, laquelle serait-elle selon vous ?",
+      "106 Qu’est-ce que la laïcité ?",
+      "107 Qu’est-ce que la démocratie pour vous ?",
+      "108 Quelles sont les formes de démocratie ?",
+      "109 Êtes-vous d’accord avec le régime démocratique ?",
+      "110 Quelles formes de libertés sont garanties en démocratie ?",
+      "111 Pensez-vous que la liberté d’expression est absolue ?",
+      "112 Quels sont les droits et devoirs du citoyen français ?",
+      "113 Quels sont les symboles de la République française ?",
+      "114 Quelles sont les couleurs du drapeau français ?",
+      "115 Que représentent les couleurs du drapeau français ?",
+      "116 Qui est Marianne ?",
+      "117 Qui est aujourd’hui le président de la République ?",
+      "117.1 Quels sont les rôles du président de la République ?",
+      "118 Qui était président de la République avant Emmanuel Macron ?",
+      "119 Qui est le Premier ministre actuel ?",
+      "119.1 Sa résidence officielle ?",
+      "119.2 Citez tous les Premiers ministres sous Macron.",
+      "120 Qui était Premier ministre avant lui/elle ?",
+      "120.1 Pourquoi a-t-il été remplacé ?",
+      "121 Dans quelle République sommes-nous ?",
+      "122 Quelles sont les dates des précédentes Républiques françaises ?",
+      "123 Qui a instauré la Cinquième République ?",
+      "123.1 Quels sont les principes de la Constitution de la Cinquième République ?",
+      "124 Où se trouve le siège de la présidence de la République ?",
+      "125 Citez dans l’ordre les présidents de la Cinquième République.",
+      "126 Citez trois anciens Premiers ministres français de la Cinquième République.",
+      "127 Citez trois ministres du gouvernement actuel.",
+      "128 Pour combien de temps le président de la République est-il élu ?",
+      "128.1 Pourquoi un quinquennat ?",
+      "129 Par quel scrutin et pour combien de mandats peut être élu le président de la République ?",
+      "130 Qui a le droit de voter aux élections ?",
+      "131 Quel est l’âge de la majorité en France ?",
+      "132 Qu’est-ce que le Parlement ?",
+      "133 Quel est le rôle exact du Parlement ?",
+      "134 Quelles sont les différentes institutions politiques en France ?",
+      "135 Qu’est-ce que le pouvoir exécutif et quel est son rôle ?",
+      "136 Qu’est-ce que le pouvoir législatif et quel est son rôle ?",
+      "137 Qu’est-ce que le pouvoir judiciaire et quel est son rôle ?",
+      "137.1 Sur quelle pensée repose la structure actuelle de séparation des pouvoirs en France ?",
+      "138 Comment sont élus les députés ?",
+      "139 Pour combien d’années sont élus les députés ?",
+      "140 Où se trouve le siège de l’Assemblée nationale ?",
+      "141 Qui est le député ou la députée de votre département ?",
+      "142 Qui constitue le gouvernement ?",
+      "143 Qui est le président ou la présidente de l’Assemblée nationale ?",
+      "144 Pour combien d’années est son mandat ?",
+      "145 Qu’est-ce que la chambre basse ? Combien ? Ses rôles.",
+      "146 Qu’est-ce que la chambre haute ? Combien ? Ses rôles.",
+      "147 Qu’est-ce que le Sénat ?",
+      "148 Comment sont élus les sénateurs ?",
+      "149 Pour combien d’années les sénateurs sont-ils élus ?",
+      "150 Quelle est la différence entre un député et un sénateur ?",
+      "151 Constitutionnellement, qui a le pouvoir de diriger le pays en cas de décès du président de la République ?",
+      "152 Qui est le président actuel du Sénat ?",
+      "153 Qu’est-ce que le Conseil constitutionnel ?",
+      "154 Qui est le président du Conseil constitutionnel ?",
+      "155 Quelle est la dernière loi votée à l’Assemblée nationale ?",
+      "156 Savez-vous ce qu’est la cohabitation politique ?",
+      "157 Citez un exemple de cohabitation politique en France ?",
+      "158 Qui nomme les ministres ?",
+      "159 Qui nomme le premier ministre ?",
+      "160 Où se trouvent les bureaux du premier ministre ?",
+      "161 Qui est le maire de votre ville ?",
+      "162 Qu’est-ce que les élections municipales ?",
+      "163 Quelle est l’hymne de la France ?",
+      "164 Qui a écrit la Marseillaise ?",
+      "165 Connaissez-vous le premier couplet de la Marseillaise ?",
+      "166 À quelle occasion la Marseillaise a-t-elle été écrite ?",
+      "167 Quelle est la monnaie actuelle de la France ?",
+      "168 Quelle est la devise de l’union européenne ?",
+      "169 Connaissez-vous l’hymne de l’Union européenne ?",
+      "170 Combien de pays compte l’Union européenne ?",
+      "171 Dans quel intérêt les pays européens rejoignent l’Union européenne ?",
+      "171.1 Quel sont les institutions communes de l’UE ?",
+      "172 Où se trouve le siège des institutions communes de l’UE ?",
+      "173 Où se trouve le siège des institutions communes de l’UE ?",
+      "174 Quel pays détient le présidence de l’union européenne cette année ?",
+      "175 Combien d’étoiles comporte le drapeau européen ?",
+      "176 Que symbolisent ces étoiles ?",
+      "177 Que représente la journée du Mai ?",
+      "178 Quels sont les symboles de l’Union européenne ?",
+      "179 Que connaissez-vous sur le traité de Rome et quand a-t-il eu lieu ?",
+      "180 Qui est Jeanne d’Arc ?",
+      "180.-1 Qui est Simone Veil ?",
+      "181 Qu’est-ce que la loi Veil ?",
+      "182 Que pensez-vous de la loi Veil ?",
+      "183 Que pensez-vous de la parité hommes-femmes ?",
+      "184 Avons-nous atteint cette parité dans tous les domaines ?",
+      "185 Quels seront les prochaines élection ?",
+      "186 Qui décidera de vous octroyer ou non la nationalité française ?",
+      "187 Quel ministre gère les relation entre l’état et les institutions religieuses ?",
+      "188 Qu’est-ce que la discrimination pour vous ?",
+      "189 La discrimination est-elle légale en France ?",
+      "190 En quelle année les citoyens français sont-ils devenus européens ?",
+      "191 Qui a le droit d’accéder à l’emploi public ?",
+      "192 En cas de conflit armé, qui peut être appelé à défendre la patrie ?",
+      "193 Qu’est-ce que le système de sécurité sociale ?",
+      "194 Par qui est financé le système de sécurité sociale ?",
+      "195 Qui finance les services publics ?",
+      "196 Êtes-vous obligé de payer vos Impôts ?",
+      "196.1 Que pensez-vous de payer des impôts ?",
+      "197 Si vous obtenez la nationalité française, comptez-vous vivre en France ?",
+      "198 Les citoyens sont-ils toujours satisfaits des choix du gouvernement ?",
+      "199 Comment les citoyens manifestent-ils leur désaccord ?",
+      "200 Citez des femmes politiques que vous connaissez",
+      "203 Quelle est l’importance du 8 mai en France ?",
+      "205 Quels sont les grands mouvements artistiques français ?",
+      "207 Quelles sont les principales périodes de l’histoire française ?",
+      "208 Qui est considéré comme le père de la Révolution industrielle en France ?",
+      "209 Quelles sont les grandes inventions françaises ?",
+      "210 Que savez-vous du patrimoine mondial de l’UNESCO en France ?",
+      "212 Qu’est-ce qu’un ministre d’État ?",
+      "213 Que fait le Conseil d’État ?",
+      "213.1 Citez une affaire traitée par le Conseil d’État ?",
+      "215 Quels sont les principes de la Constitution de 1958 ?",
+      "216 Qu’est-ce que la Haute Cour de justice ?",
+      "217 Quelles sont les compétences des régions / des départements / des communes en France ?",
+      "218 Que savez-vous sur les collectivités d’outre-mer ?",
+      "219 Quel est le rôle des préfets en France ?",
+      "220 Quels sont les droits des citoyens européens vivant en France ?",
+      "221 Quelles sont les grandes entreprises françaises ?",
+      "222 Quelles sont les principales exportations de la France ?",
+      "223 Quel est le rôle de la Banque de France ?",
+      "224 Que savez-vous des réformes des retraites en France ?",
+      "225 Qu’est-ce que le SMIC en France ?",
+      "226 Quelles sont les politiques sociales en faveur des familles ?",
+      "227 Quels sont les défis environnementaux en France ?",
+      "228 Quelles sont les grandes réformes sociales du XXᵉ siècle en France ?",
+      "229 Qu’est-ce que la transition énergétique en France ?",
+      "230 Quels sont les secteurs économiques les plus dynamiques en France ?",
+      "231 Quelles sont les traditions régionales françaises ?",
+      "232 Que savez-vous de la cuisine française et de son classement à l’UNESCO ?",
+      "233 Quels sont les jours fériés en France ?",
+      "234 Quelles sont les habitudes alimentaires des Français ?",
+      "235 Que représente le sport en France ?",
+      "236 Quels sont les principaux festivals en France ?",
+      "237 Que savez-vous sur la mode et le luxe en France ?",
+      "239 Comment participez-vous à la vie locale en France ?",
+      "240 Quels médias français consultez-vous régulièrement ?",
+      "241 Quels sont les engagements de la France au sein de l’ONU ?",
+      "242 Quels sont les accords historiques entre la France et l’Allemagne ?",
+      "243 Quels sont les objectifs de la Francophonie ?",
+      "244 Quelles sont les grandes alliances militaires de la France ?",
+      "245 Que savez-vous du rôle de la France dans l’Union européenne ?",
+      "247 Quels sont les territoires ultramarins français dans l’océan Indien ?",
+      "247.1 Quels sont les territoires ultramarins français dans l’océan Atlantique ?",
+      "247.2 Quels sont les territoires ultramarins français dans l’océan Pacifique ?",
+      "247.3 Quels sont les territoires ultramarins français dans la mer des Caraïbes ?",
+      "249 Quelles sont les grandes régions viticoles de France ?",
+      "250 Où se situe le massif du Jura ?",
+      "251 Que pensez-vous du mariage pour tous ?",
+      "252 Est-ce qu’il est interdit de faire des caricatures en France, qu’en pensez-vous ?",
+      "253 Qu’est-ce que vous pensez de la loi sur les tenues destinées à dissimuler le visage ?",
+      "254 Quel est votre avis sur la participation de la France dans des opérations militaires à l'étranger ?",
+      "255 Que pensez-vous des mesures mises en place pour lutter contre le changement climatique en France ?"
+];
+
+const questionEl = document.getElementById("question");
+const progressEl = document.getElementById("progress");
+const okBtn = document.querySelector(".ok");
+const passBtn = document.querySelector(".pass");
+
+let remainingQuestions = [...questions];
+let passedQuestions = [];
+let correctCount = 0;
+let currentQuestion = null;
+
+const totalQuestions = questions.length;
+let replayMode = false; // 오답 재도전 모드 여부
+
+function updateProgress() {
+  progressEl.textContent = `${correctCount} / ${passedQuestions.length} / ${totalQuestions}`;
+  // OK 수 / PASS 수 / 총 문제 수
+}
+
+function showNextQuestion() {
+  if (remainingQuestions.length === 0) {
+    if (passedQuestions.length > 0) {
+      // PASS 문제 남아있으면 재도전 모드 유지
+      showSummary();
+      return;
+    } else {
+      // 모든 문제 다 맞췄으면 최종 종료
+      questionEl.innerHTML = `🎉 모든 문제를 완료했습니다!<br>
+        최종 점수: OK: ${correctCount}, PASS: 0, Total: ${totalQuestions}`;
+      return;
+    }
+  }
+
+  const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+  currentQuestion = remainingQuestions[randomIndex];
+  questionEl.textContent = currentQuestion;
+}
+
+function showSummary() {
+  // 점수 정산 화면 표시 및 남은 오답 목록
+  questionEl.innerHTML = `
+    🎉 현재 단계 완료!<br>
+    점수: OK: ${correctCount}, PASS: ${passedQuestions.length}, Total: ${totalQuestions}<br>
+    ${passedQuestions.length ? '남은 오답 문제:<br>' + passedQuestions.join('<br>') : ''}
+  `;
+
+  if (passedQuestions.length > 0) {
+    // 오답 문제 다시 풀기 버튼 생성
+    const replayBtn = document.createElement("button");
+    replayBtn.textContent = "오답 문제 다시 풀기";
+    replayBtn.style.marginTop = "20px";
+    replayBtn.style.padding = "10px 20px";
+    replayBtn.style.fontSize = "1rem";
+    replayBtn.style.borderRadius = "8px";
+    replayBtn.style.cursor = "pointer";
+    replayBtn.style.backgroundColor = "#2196F3";
+    replayBtn.style.color = "white";
+
+    replayBtn.addEventListener("click", () => {
+      remainingQuestions = [...passedQuestions];
+      passedQuestions = [];
+      replayMode = true;
+      updateProgress();
+      showNextQuestion();
+      replayBtn.remove();
+    });
+
+    questionEl.appendChild(document.createElement("br"));
+    questionEl.appendChild(replayBtn);
+  } else {
+    // 오답 문제 없음 → 최종 종료
+    questionEl.innerHTML += "<br>모든 문제를 맞췄습니다! 🎉";
+  }
+}
+
+// OK 버튼 클릭
+okBtn.addEventListener("click", () => {
+  if (!currentQuestion) return;
+
+  correctCount++;
+  remainingQuestions = remainingQuestions.filter(q => q !== currentQuestion);
+  updateProgress();
+  showNextQuestion();
+});
+
+// PASS 버튼 클릭
+passBtn.addEventListener("click", () => {
+  if (!currentQuestion) return;
+
+  passedQuestions.push(currentQuestion);
+  remainingQuestions = remainingQuestions.filter(q => q !== currentQuestion);
+  updateProgress();
+  showNextQuestion();
+});
+
+// 페이지 로드 시 첫 문제 표시
+window.onload = () => showNextQuestion();
+</script>
+
+
+
+
+
+</body>
+</html>
